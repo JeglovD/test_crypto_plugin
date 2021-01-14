@@ -24,7 +24,7 @@ define( [
 		// Параметры:
 		//		Название метода
 		//		Параметры
-		test: function( method, params ) {
+		Call: function( method, params ) {
 			let crypto_plugin_params = {
 				name: "SbisCryptoPlugin",
 				version: "0.0.0.0"
@@ -42,7 +42,7 @@ define( [
 				}
 			});
 			
-			crypto_plugin.call( 'IsAnyProviderInstalled' ).addCallback( function( result ) { console.log( "Callback: result = " + result ); } ).addErrback( function() { console.log( "Errback" ) } );
+			crypto_plugin.call( method ).addCallback( function( result ) { console.log( method + "() -> " + result ); } ).addErrback( function( error ) { console.log( method + "() " + error ) } );
 		},
 
 		EncryptLocalFile: function(recipientsData, localFilePath, plugin) {
@@ -60,7 +60,7 @@ define( [
 //			return _getPlugin(plugin).addCallback(function(pluginInit) {
 //				pluginInit.call('IsAnyProviderInstalled').addCallback( function( result ) { console.log( "Callback: result = " + result ); } ).addErrback( function() { console.log( "Errback" ) } );
 //			});
-			return this.test();
+			this.Call( "IsAnyProviderInstalled" );
 		}
 	};
 
