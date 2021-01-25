@@ -11,15 +11,14 @@ define( [
 	TransportLib,
 	SbisPluginClientFull
 ) {
-	var _getPlugin = function(plugin) {
-		if (plugin) {
-			return new Deferred().callback(plugin);
-		}
-		return CryptoPlugin.init();
-	};
+	// var _getPlugin = function(plugin) {
+		// if (plugin) {
+			// return new Deferred().callback(plugin);
+		// }
+		// return CryptoPlugin.init();
+	// };
 
 	var module_class = {
-
 		// Функция для вызова метода в плагине
 		// Параметры:
 		//		Название метода
@@ -56,16 +55,16 @@ define( [
 			return deferred;
 		},
 
-		EncryptLocalFile: function(recipientsData, localFilePath, plugin) {
-			// Плагин нам могли передать уже инициализированный, если нет, то инициализируем новый
-			return _getPlugin(plugin).addCallback(function(pluginInit) {
-				var pluginCallParams = {
-					'LocalFilePath': localFilePath,
-					'RecipientsData': recipientsData
-				};
-				return pluginInit.call('EncryptLocalFile', pluginCallParams);
-			});
-		},
+		// EncryptLocalFile: function(recipientsData, localFilePath, plugin) {
+			// // Плагин нам могли передать уже инициализированный, если нет, то инициализируем новый
+			// return _getPlugin(plugin).addCallback(function(pluginInit) {
+				// var pluginCallParams = {
+					// 'LocalFilePath': localFilePath,
+					// 'RecipientsData': recipientsData
+				// };
+				// return pluginInit.call('EncryptLocalFile', pluginCallParams);
+			// });
+		// },
 		
 		All: function() {
 			let crypto_plugin_params = {
@@ -90,29 +89,43 @@ define( [
 //			});
 
 			// Получение списка сертификатов на устройстве
-			module_class.Call( crypto_plugin, "GetParsedCertificates", {} ).
-				addCallback( function( certificates ) { 
-					//certificates.forEach( function( certificate, number, array ) { 
-					//	console.log( certificate._object ); 
-					//} )
+			// module_class.Call( crypto_plugin, "GetParsedCertificates", {} ).
+				// addCallback( function( certificates ) { 
+					// //certificates.forEach( function( certificate, number, array ) { 
+					// //	console.log( certificate._object ); 
+					// //} )
 
-					// test-online.sbis.run
-					// Кров / Кров123
-					// Тестовый файл лежим в Документах / Моих
-					// Ссылку получаем из ReadAttachmentInfo, 
-					//href: "https://test-disk.sbis.ru/disk/api/v1/c18123e9-ab61-4e38-906f-c0321a20e122_22790a22-10dd-4530-a371-fadb322ad02f",
-					//hrefWithSign: "https://test-disk.sbis.ru/disk/api/v1/c18123e9-ab61-4e38-906f-c0321a20e122_22790a22-10dd-4530-a371-fadb322ad02f?with_sign=true",
-					//relativeUrl: "/disk/api/v1/c18123e9-ab61-4e38-906f-c0321a20e122_22790a22-10dd-4530-a371-fadb322ad02f",
-					//relativeUrlWithSign: "/disk/api/v1/c18123e9-ab61-4e38-906f-c0321a20e122_22790a22-10dd-4530-a371-fadb322ad02f?with_sign=true",
-					//urlToOpen: "https://test-online.sbis.ru/shared/disk/061b67db-58c8-4e76-add0-0b7c44eb67f7",
-					module_class.Call( crypto_plugin, "EncryptDataUrl", { SourceDataUrl: "https://test-disk.sbis.ru/disk/api/v1/c18123e9-ab61-4e38-906f-c0321a20e122_22790a22-10dd-4530-a371-fadb322ad02f", Certificates: certificates } ).
-						addCallback( function( record ) {
-							//debugger;
+					// // test-online.sbis.run
+					// // Кров / Кров123
+					// // Тестовый файл лежим в Документах / Моих
+					// // Ссылку получаем из ReadAttachmentInfo, 
+					// //href: "https://test-disk.sbis.ru/disk/api/v1/c18123e9-ab61-4e38-906f-c0321a20e122_22790a22-10dd-4530-a371-fadb322ad02f",
+					// //hrefWithSign: "https://test-disk.sbis.ru/disk/api/v1/c18123e9-ab61-4e38-906f-c0321a20e122_22790a22-10dd-4530-a371-fadb322ad02f?with_sign=true",
+					// //relativeUrl: "/disk/api/v1/c18123e9-ab61-4e38-906f-c0321a20e122_22790a22-10dd-4530-a371-fadb322ad02f",
+					// //relativeUrlWithSign: "/disk/api/v1/c18123e9-ab61-4e38-906f-c0321a20e122_22790a22-10dd-4530-a371-fadb322ad02f?with_sign=true",
+					// //urlToOpen: "https://test-online.sbis.ru/shared/disk/061b67db-58c8-4e76-add0-0b7c44eb67f7",
+					// module_class.Call( crypto_plugin, "EncryptDataUrl", { SourceDataUrl: "https://test-disk.sbis.ru/disk/api/v1/c18123e9-ab61-4e38-906f-c0321a20e122_22790a22-10dd-4530-a371-fadb322ad02f", Certificates: certificates } ).
+						// addCallback( function( record ) {
+							// console.log( "addCallback()" );
+							// //debugger;
+						// } ).
+						// addErrback( function( error ) {
+							// console.log( "addErrback()" );
+							// //debugger;
+						// } );
+				// } );
+
+			// Конфигурация плагина
+			module_class.Call( crypto_plugin, "Configure", { Parameters: { providerClasses: [ "GOST", "GOST_2012" ] } } ).
+				addCallback( function() { 
+					// Получение списка сертификатов
+					module_class.Call( crypto_plugin, "GetParsedCertificates", {} ).
+						addCallback( function( certificates ) { 
+							console.log( "ok" ) 
 						} ).
-						addErrback( function( error ) {
-							//debugger;
-						} );
-				} );
+						addErrback( function( error ) { console.log( "error" ) } );
+				} ).
+				addErrback( function() { console.log( "error" ) } );
 		}
 	};
 
