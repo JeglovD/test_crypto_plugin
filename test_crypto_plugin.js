@@ -118,14 +118,86 @@ define( [
 			// Конфигурация плагина
 			module_class.Call( crypto_plugin, "Configure", { Parameters: { providerClasses: [ "GOST", "GOST_2012" ] } } ).
 				addCallback( function() { 
-					// Получение списка сертификатов
-					module_class.Call( crypto_plugin, "GetParsedCertificates", {} ).
-						addCallback( function( certificates ) { 
-							console.log( "ok" ) 
+					// Получение списка контейнеров из кэша
+					/*module_class.Call( crypto_plugin, "GetContainerNamesFromCache", {} ).
+						addCallback( function( containers ) { console.log( "ok" ) } ).
+						addErrback( function( error ) { console.log( "error" ) } )
+					*/
+					// Получение списка контейнеров от провайдеров
+					/*module_class.Call( crypto_plugin, "GetContainerNames", {} ).
+						addCallback( function( containers ) { 
+							// Получение списка контейнеров из кэша
+							module_class.Call( crypto_plugin, "GetContainerNamesFromCache", {} ).
+								addCallback( function( containers ) { console.log( "ok" ) } ).
+								addErrback( function( error ) { console.log( "error" ) } )
 						} ).
-						addErrback( function( error ) { console.log( "error" ) } );
+						addErrback( function( error ) { console.log( "error" ) } )
+					*/
+					// Получение списка сертификатов
+					/*module_class.Call( crypto_plugin, "GetParsedCertificates", {} ).
+						addCallback( function( certificates ) { 
+							// Извлекаем закрытый ключ с названием контейнера
+							module_class.Call( crypto_plugin, "CertificateGetPrivateKey", { Certificate: certificates[ 0 ]._object, ContainerName: certificates[ 0 ].container_name } ).
+								addCallback( function() { console.log( "ok" ) } ).
+								addErrback( function() { console.log( "error" ) } )
+							// Извлекаем закрытый ключ без названия контейнера
+							module_class.Call( crypto_plugin, "CertificateGetPrivateKey", { Certificate: certificates[ 0 ]._object } ).
+								addCallback( function() { console.log( "ok" ) } ).
+								addErrback( function() { console.log( "error" ) } )
+						} ).
+						addErrback( function( error ) { console.log( "error" ) } )
+					*/
+					
+					// ----------
+					// Тест: Получение 1 сертификата кэша
+					// ----------
+					// Чистим кэш
+					/*module_class.Call( crypto_plugin, "ClearCache" ).
+						addCallback( function() {
+							// Получение списка контейнеров
+							module_class.Call( crypto_plugin, "GetContainerNames", {} ).
+								addCallback( function( containers ) {
+									// Получение сертификата из пустого кэша
+									module_class.Call( crypto_plugin, "LoadCertificateParsedObjectFromCache", { ContainerName: containers[ 0 ] } ).
+										addCallback( function( certificate ) {
+											console.log( "ok, а так не должно быть" )
+										} ).
+										addErrback( function( error ) {
+											// Получение сертификата от криптопровайдера
+											module_class.Call( crypto_plugin, "LoadCertificateParsedObjectFromContainer", { ContainerName: containers[ 0 ] } ).
+												addCallback( function( certificate ) {
+													// Получение сертификата из кэша
+													module_class.Call( crypto_plugin, "LoadCertificateParsedObjectFromCache", { ContainerName: containers[ 0 ] } ).
+														addCallback( function( certificate ) {
+														} )
+												} )
+										} )
+								} )
+						} )
+					*/
+					
+					// ----------
+					// Тест: Получение списка сертификатов из кэша
+					// ----------
+					// Чистим кэш
+					module_class.Call( crypto_plugin, "ClearCache", {} ).
+						addCallback( function() {
+							// Получаем список сертификатов из пустого кэша
+							module_class.Call( crypto_plugin, "GetParsedCertificatesFromCache", {} ).
+								addCallback( function( certificates ) {
+									// Получаем список сертификатов от провайдера
+									module_class.Call( crypto_plugin, "GetParsedCertificates", {} ).
+										addCallback( function( certificates ) {
+											// Получаем список сертификатов из кэша
+											module_class.Call( crypto_plugin, "GetParsedCertificatesFromCache", {} ).
+												addCallback( function( certificates ) {
+													
+												} )
+										} )
+								} )
+						} )
 				} ).
-				addErrback( function() { console.log( "error" ) } );
+				addErrback( function() { console.log( "error" ) } )
 		}
 	};
 
