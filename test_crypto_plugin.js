@@ -45,11 +45,11 @@ define( [
 			
 			crypto_plugin.call( method, params ).
 				addCallback( function( result ) { 
-					console.log( method + "() " ); 
+					console.log( method + "() - ok" ); 
 					deferred.callback( result );
 				} ).
 				addErrback( function( error ) { 
-					console.log( method + "() " + error );
+					console.log( method + "() - error: " + error );
 					deferred.errback( error );
 				} );
 			return deferred;
@@ -118,11 +118,26 @@ define( [
 			// Конфигурация плагина
 			module_class.Call( crypto_plugin, "Configure", { Parameters: { providerClasses: [ "GOST", "GOST_2012" ] } } ).
 				addCallback( function() { 
-					// Получение списка контейнеров из кэша
-					/*module_class.Call( crypto_plugin, "GetContainerNamesFromCache", {} ).
-						addCallback( function( containers ) { console.log( "ok" ) } ).
-						addErrback( function( error ) { console.log( "error" ) } )
-					*/
+					// ----------
+					// Тест: Получение контейнеров из кэша
+					// ----------
+					// Чистим кэш
+					module_class.Call( crypto_plugin, "ClearCache", {} ).
+						addCallback( function() {
+							// Получение списка контейнеров из пустого кэша
+							module_class.Call( crypto_plugin, "GetContainerNamesFromCache", {} ).
+								addCallback( function( containers ) { 
+									// Получение списка контейнеров от провайдера
+									module_class.Call( crypto_plugin, "GetContainerNames", {} ).
+										addCallback( function( containers ) {
+											// Получение контейнеров из кэша
+											module_class.Call( crypto_plugin, "GetContainerNamesFromCache", {} ).
+												addCallback( function() {
+													
+												} )
+										} )
+								} )
+						} )
 					// Получение списка контейнеров от провайдеров
 					/*module_class.Call( crypto_plugin, "GetContainerNames", {} ).
 						addCallback( function( containers ) { 
@@ -180,7 +195,7 @@ define( [
 					// Тест: Получение списка сертификатов из кэша
 					// ----------
 					// Чистим кэш
-					module_class.Call( crypto_plugin, "ClearCache", {} ).
+					/*module_class.Call( crypto_plugin, "ClearCache", {} ).
 						addCallback( function() {
 							// Получаем список сертификатов из пустого кэша
 							module_class.Call( crypto_plugin, "GetParsedCertificatesFromCache", {} ).
@@ -196,6 +211,7 @@ define( [
 										} )
 								} )
 						} )
+					*/
 				} ).
 				addErrback( function() { console.log( "error" ) } )
 		}
