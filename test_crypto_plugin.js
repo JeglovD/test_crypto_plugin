@@ -74,7 +74,7 @@ define( [
 			module_class.Call( crypto_plugin, "Configure", { Parameters: { providerClasses: [ "GOST", "GOST_2012" ] } } ).
 				addCallback( function() { 
 				
-					{ // Тест: Получение контейнеров из кэша
+					{ ////////// Получение контейнеров из кэша
 						/*// Чистим кэш
 						module_class.Call( crypto_plugin, "ClearCache", {} ).
 							addCallback( function() {
@@ -94,7 +94,7 @@ define( [
 						*/
 					}
 					
-					{ // Получение списка контейнеров от провайдеров
+					{ ////////// Получение списка контейнеров от провайдеров
 						/*module_class.Call( crypto_plugin, "GetContainerNames", {} ).
 							addCallback( function( containers ) { 
 								// Получение списка контейнеров из кэша
@@ -105,23 +105,25 @@ define( [
 					*/
 					}
 					
-					{ // Тест: Получение списка сертификатов
-						/*module_class.Call( crypto_plugin, "GetParsedCertificates", {} ).
-							addCallback( function( certificates ) { 
-								// Извлекаем закрытый ключ с названием контейнера
-								module_class.Call( crypto_plugin, "CertificateGetPrivateKey", { Certificate: certificates[ 0 ]._object, ContainerName: certificates[ 0 ].container_name } ).
-									addCallback( function() { console.log( "ok" ) } ).
-									addErrback( function() { console.log( "error" ) } )
-								// Извлекаем закрытый ключ без названия контейнера
-								module_class.Call( crypto_plugin, "CertificateGetPrivateKey", { Certificate: certificates[ 0 ]._object } ).
-									addCallback( function() { console.log( "ok" ) } ).
-									addErrback( function() { console.log( "error" ) } )
-							} ).
-							addErrback( function( error ) { console.log( "error" ) } )
-						*/
+					{ ////////// Получение списка сертификатов, извлечение секретного ключа
+						module_class.Call( crypto_plugin, "GetParsedCertificates", {} ).
+							addCallback( function( certificates ) {
+								if( certificates.length != 0 )
+								{
+									// Извлекаем закрытый ключ с названием контейнера
+									module_class.Call( crypto_plugin, "CertificateGetPrivateKey", { Certificate: certificates[ 0 ]._object, ContainerName: certificates[ 0 ].container_name } ).
+										addCallback( function() { console.log( "ok" ) } ).
+										addErrback( function() { console.log( "error" ) } )
+									// Извлекаем закрытый ключ без названия контейнера
+									module_class.Call( crypto_plugin, "CertificateGetPrivateKey", { Certificate: certificates[ 0 ]._object } ).
+										addCallback( function() { console.log( "ok" ) } ).
+										addErrback( function() { console.log( "error" ) } )
+								}
+							} )
+						
 					}
 					
-					{ // Тест: Получение 1 сертификата кэша
+					{ ////////// Получение 1 сертификата кэша
 						// Чистим кэш
 						/*module_class.Call( crypto_plugin, "ClearCache" ).
 							addCallback( function() {
@@ -148,7 +150,7 @@ define( [
 						*/
 					}
 					
-					{ // Тест: Получение списка сертификатов из кэша
+					{ ////////// Получение списка сертификатов из кэша
 						/*// Чистим кэш
 						module_class.Call( crypto_plugin, "ClearCache", {} ).
 							addCallback( function() {
@@ -168,7 +170,7 @@ define( [
 						*/
 					}
 					
-					{ // Тест: CryptoPluginRemote.SendContainerInfo
+					{ ////////// CryptoPluginRemote.SendContainerInfo
 						/*var tokens = new collection.RecordSet( { adapter: 'adapter.sbis' } );
 						tokens.add( entity.Record.fromObject( {	Serial: "4C7D9081",	Name: "Новый том", Type: "REMOVABLE_DRIVE",	StorageCapacity: null, StorageFreeSpace: null }, 'adapter.sbis' ) )
 						var container = new entity.Record( {
@@ -200,8 +202,7 @@ define( [
 							} )
 						*/
 					}
-				} ).
-				addErrback( function() { console.log( "error" ) } )
+				} )
 		}
 	};
 
