@@ -1,3 +1,5 @@
+// Вызов: requirejs(['test_crypto_plugin'], function( test ) { test.All(); })
+
 define( [
 	'Core/Deferred',
 	'Cryptography/CryptoPlugin',
@@ -111,9 +113,10 @@ define( [
 								if( certificates.length != 0 )
 								{
 									// Извлекаем закрытый ключ с названием контейнера
-									module_class.Call( crypto_plugin, "CertificateGetPrivateKey", { Certificate: certificates[ 0 ]._object, ContainerName: certificates[ 0 ].container_name } ).
+									/*module_class.Call( crypto_plugin, "CertificateGetPrivateKey", { Certificate: certificates[ 0 ]._object, ContainerName: certificates[ 0 ].container_name } ).
 										addCallback( function() { console.log( "ok" ) } ).
 										addErrback( function() { console.log( "error" ) } )
+									*/
 									// Извлекаем закрытый ключ без названия контейнера
 									module_class.Call( crypto_plugin, "CertificateGetPrivateKey", { Certificate: certificates[ 0 ]._object } ).
 										addCallback( function() { console.log( "ok" ) } ).
