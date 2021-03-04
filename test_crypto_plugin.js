@@ -73,7 +73,7 @@ define( [
 			} );
 
 			// Конфигурация плагина
-			module_class.Call( crypto_plugin, "Configure", { Parameters: { providerClasses: [ "GOST", "GOST_2012" ] } } ).
+			module_class.Call( crypto_plugin, "Configure", { Parameters: { providerClasses: [ "GOST", "GOST_2012", "RSA" ] } } ).
 				addCallback( function() { 
 				
 					{ ////////// Получение контейнеров из кэша
@@ -96,34 +96,61 @@ define( [
 						*/
 					}
 					
+					{ ////////// Получаем по отпечаткам атрибуты контейнеров из кэша
+						// Чистим кэш
+						/*module_class.Call( crypto_plugin, "ClearCache", {} ).
+							addCallback( function() {
+								// Получаем список сертификатов от провайдера
+								module_class.Call( crypto_plugin, "GetParsedCertificates", {} ).
+									addCallback( function( certificates ) {
+										let thumbprints = new Array();
+										for( let it = 0; it < certificates.length; ++it )
+											thumbprints.push( certificates[ it ].parsed_data.ID );
+										// Получаем атрибуты соответствующих им контейнеров
+										module_class.Call( crypto_plugin, "GetContainersAttributesFromThumbprints", { Thumbprints: thumbprints } ).
+											addCallback( function( thumbprints_container_names ) {
+											} )
+									} )
+							} )
+						*/
+					}
+					
 					{ ////////// Получение списка контейнеров от провайдеров
 						/*module_class.Call( crypto_plugin, "GetContainerNames", {} ).
 							addCallback( function( containers ) { 
-								// Получение списка контейнеров из кэша
-								module_class.Call( crypto_plugin, "GetContainerNamesFromCache", {} ).
-									addCallback( function( containers ) { console.log( "ok" ) } ).
-									addErrback( function( error ) { console.log( "error" ) } )
 							} )
-					*/
+						*/
+					}
+					
+					{ ////////// Получение RSA сертификата из контейнера
+						module_class.Call( crypto_plugin, "GetCertificateFromContainer", { ContainerName: "RSA_Com_EToken::d65ee731:041c2205" } ).
+							addCallback( function() {
+							} )
+					}
+
+					{ ////////// Получение ГОСТ сертификата из контейнера
+						/*module_class.Call( crypto_plugin, "GetCertificateFromContainer", { ContainerName: "GOST_2012_256_Com_RtECP20::3a3852a4:20082402" } ).
+							addCallback( function() {
+							} )
+						*/
 					}
 					
 					{ ////////// Получение списка сертификатов, извлечение секретного ключа
-						module_class.Call( crypto_plugin, "GetParsedCertificates", {} ).
+						/*module_class.Call( crypto_plugin, "GetParsedCertificates", {} ).
 							addCallback( function( certificates ) {
 								if( certificates.length != 0 )
 								{
 									// Извлекаем закрытый ключ с названием контейнера
-									/*module_class.Call( crypto_plugin, "CertificateGetPrivateKey", { Certificate: certificates[ 0 ]._object, ContainerName: certificates[ 0 ].container_name } ).
+									module_class.Call( crypto_plugin, "CertificateGetPrivateKey", { Certificate: certificates[ 0 ]._object, ContainerName: certificates[ 0 ].container_name } ).
 										addCallback( function() { console.log( "ok" ) } ).
 										addErrback( function() { console.log( "error" ) } )
-									*/
 									// Извлекаем закрытый ключ без названия контейнера
 									module_class.Call( crypto_plugin, "CertificateGetPrivateKey", { Certificate: certificates[ 0 ]._object } ).
 										addCallback( function() { console.log( "ok" ) } ).
 										addErrback( function() { console.log( "error" ) } )
 								}
 							} )
-						
+						*/
 					}
 					
 					{ ////////// Получение 1 сертификата кэша
