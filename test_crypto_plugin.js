@@ -76,6 +76,13 @@ define( [
 			module_class.Call( crypto_plugin, "Configure", { Parameters: { providerClasses: [ "GOST", "GOST_2012", "RSA" ] } } ).
 				addCallback( function() { 
 				
+					{ ////////// Подпись base64
+						/*module_class.Call( crypto_plugin, "Test", {} ).
+							addCallback( function( result ) {
+							} )
+						*/
+					}
+					
 					{ ////////// Получение контейнеров из кэша
 						/*// Чистим кэш
 						module_class.Call( crypto_plugin, "ClearCache", {} ).
@@ -98,7 +105,7 @@ define( [
 					
 					{ ////////// Получаем по отпечаткам атрибуты контейнеров из кэша
 						// Чистим кэш
-						/*module_class.Call( crypto_plugin, "ClearCache", {} ).
+						module_class.Call( crypto_plugin, "ClearCache", {} ).
 							addCallback( function() {
 								// Получаем список сертификатов от провайдера
 								module_class.Call( crypto_plugin, "GetParsedCertificates", {} ).
@@ -107,12 +114,11 @@ define( [
 										for( let it = 0; it < certificates.length; ++it )
 											thumbprints.push( certificates[ it ].parsed_data.ID );
 										// Получаем атрибуты соответствующих им контейнеров
-										module_class.Call( crypto_plugin, "GetContainersAttributesFromThumbprints", { Thumbprints: thumbprints } ).
+										module_class.Call( crypto_plugin, "GetContainersForThumbprints", { Thumbprints: thumbprints } ).
 											addCallback( function( thumbprints_container_names ) {
 											} )
 									} )
 							} )
-						*/
 					}
 					
 					{ ////////// Получение списка контейнеров от провайдеров
@@ -123,9 +129,10 @@ define( [
 					}
 					
 					{ ////////// Получение RSA сертификата из контейнера
-						module_class.Call( crypto_plugin, "GetCertificateFromContainer", { ContainerName: "RSA_Com_EToken::d65ee731:041c2205" } ).
+						/*module_class.Call( crypto_plugin, "GetCertificateFromContainer", { ContainerName: "RSA_Com_EToken::d65ee731:041c2205" } ).
 							addCallback( function() {
 							} )
+						*/
 					}
 
 					{ ////////// Получение ГОСТ сертификата из контейнера
