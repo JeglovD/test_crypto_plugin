@@ -55,6 +55,7 @@ define( [
 					queryTimeout: 60000
 				}
 			});
+			/*
 			let crypto_plugin_remote_params = {
 				name: "CryptoPluginRemote",
 				version: "0.0.0.0"
@@ -71,14 +72,47 @@ define( [
 					queryTimeout: 60000
 				}
 			} );
+			*/
 
 			// Конфигурация плагина
-			module_class.Call( crypto_plugin, "Configure", { Parameters: { providerClasses: [ "GOST", "GOST_2012", "RSA" ] } } ).
+			module_class.Call( crypto_plugin, "Configure", { Parameters: { providerClasses: [ 
+					"GOST", 
+					"GOST_2012", 
+					//"RSA" 
+				] } } ).
 				addCallback( function() { 
 				
-					{ ////////// Подпись base64
-						/*module_class.Call( crypto_plugin, "Test", {} ).
+					{ ////////// DecryptDataUrl
+						/*
+						module_class.Call( crypto_plugin, "GetParsedCertificates", {} ).addCallback( function( certificates ) {
+							module_class.Call( crypto_plugin, "EncryptDataUrl", { 
+								SourceDataUrl: "https://test-disk.sbis.ru/disk/api/v1/244ab66e-6da6-4400-9c86-1b40f4624184_74be5020-5329-4543-8e89-1bfa5cc305a1",
+								Certificates: certificates 
+							} ).addCallback( function( data_encrypt ) {
+								debugger;
+							} )
+						} )
+						*/
+					}
+					
+					{ ////////// Нагрузочное тестирование
+						/*
+						module_class.Call( crypto_plugin, "Test", {} ).
 							addCallback( function( result ) {
+								var data = new entity.Record( {
+									adapter: 'adapter.sbis',
+									format: [
+										{ name: "id", type: "string" },
+										{ name: "name", type: "string" },
+									]
+								} )
+								data.set( { 
+									id: "123",
+									name: "SBISPLUGIN_SECUREWEBSOCKET"
+								} )
+								module_class.Call( crypto_plugin, "ClientDisconnected", { Data: [ { id: "123", name: "SBISPLUGIN_SECUREWEBSOCKET" } ] } ).
+									addCallback( function() {
+									} )
 							} )
 						*/
 					}
@@ -104,6 +138,7 @@ define( [
 					}
 					
 					{ ////////// Получаем по отпечаткам атрибуты контейнеров из кэша
+						/*
 						// Чистим кэш
 						module_class.Call( crypto_plugin, "ClearCache", {} ).
 							addCallback( function() {
@@ -119,6 +154,7 @@ define( [
 											} )
 									} )
 							} )
+						*/
 					}
 					
 					{ ////////// Получение списка контейнеров от провайдеров
@@ -188,23 +224,9 @@ define( [
 					}
 					
 					{ ////////// Получение списка сертификатов из кэша
-						/*// Чистим кэш
-						module_class.Call( crypto_plugin, "ClearCache", {} ).
-							addCallback( function() {
-								// Получаем список сертификатов из пустого кэша
-								module_class.Call( crypto_plugin, "GetParsedCertificatesFromCache", {} ).
-									addCallback( function( certificates ) {
-										// Получаем список сертификатов от провайдера
-										module_class.Call( crypto_plugin, "GetParsedCertificates", {} ).
-											addCallback( function( certificates ) {
-												// Получаем список сертификатов из кэша
-												module_class.Call( crypto_plugin, "GetParsedCertificatesFromCache", {} ).
-													addCallback( function( certificates ) {
-													} )
-											} )
-									} )
+						module_class.Call( crypto_plugin, "GetParsedCertificatesFromCache", {} ).
+							addCallback( function( certificates ) {
 							} )
-						*/
 					}
 					
 					{ ////////// CryptoPluginRemote.SendContainerInfo
