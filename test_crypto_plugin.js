@@ -38,11 +38,60 @@ define( [
 			return deferred;
 		},
 
+		Iteration: function( item ) {
+			console.log( item );
+			let crypto_plugin_params = {
+				name: "SbisCryptoPlugin",
+				version: "0.0.0.0"
+			};
+			let crypto_plugin = new SbisPluginClientFull.LocalService( {
+				endpoint: {
+					address: crypto_plugin_params.name + '-' + crypto_plugin_params.version,
+					contract: crypto_plugin_params.name
+				},
+				options: {
+					mode: "runOnce",
+					opener: {},
+					// Таймаут ответа - 1 мин
+					queryTimeout: 60000
+				}
+			});
+			crypto_plugin.destroy();
+			delete crypto_plugin_params;
+			if( item > 0 )
+				this.Iteration( --item );
+		},
+
 		All: function() {
 			let crypto_plugin_params = {
 				name: "SbisCryptoPlugin",
 				version: "0.0.0.0"
 			};
+			
+			let crypto_plugin = new SbisPluginClientFull.LocalService( {
+				endpoint: {
+					address: crypto_plugin_params.name + '-' + crypto_plugin_params.version,
+					contract: crypto_plugin_params.name
+				},
+				options: {
+					mode: "runOnce",
+					opener: {},
+					// Таймаут ответа - 1 мин
+					queryTimeout: 60000
+				}
+			});
+				
+			module_class.Call( crypto_plugin, "Item", { Parameters: { providerClasses: [ "GOST", "GOST_2012" ] } } ).
+				addCallback( function() 
+				{
+//						module_class.Call( crypto_plugin, "ClientDisconnected", { Data: [ { id: "123", name: "SBISPLUGIN_SECUREWEBSOCKET" } ] } ).
+//							addCallback( function() {
+								crypto_plugin.destroy();
+//							} )
+				})
+
+			
+			/*
 			var crypto_plugin = new SbisPluginClientFull.LocalService( {
 				endpoint: {
 					address: crypto_plugin_params.name + '-' + crypto_plugin_params.version,
@@ -55,6 +104,7 @@ define( [
 					queryTimeout: 60000
 				}
 			});
+			*/
 			/*
 			let crypto_plugin_remote_params = {
 				name: "CryptoPluginRemote",
@@ -75,15 +125,42 @@ define( [
 			*/
 
 			// Конфигурация плагина
-			module_class.Call( crypto_plugin, "Configure", { Parameters: { providerClasses: [ 
-					"GOST", 
-					"GOST_2012", 
-					//"RSA" 
-				] } } ).
-				addCallback( function() { 
+//			module_class.Call( crypto_plugin, "Configure", { Parameters: { providerClasses: [ 
+//					"GOST", 
+//					"GOST_2012", 
+//					//"RSA" 
+//				] } } ).
+//				addCallback( function() { 
 				
+					/*
+					{ // Memory leak
+						module_class.Call( crypto_plugin, "ClientDisconnected", { Data: [ { id: "123", name: "SBISPLUGIN_SECUREWEBSOCKET" } ] } ).
+							addCallback( function() {
+							} )
+					}
+					*/
+					
+					/*
+					{ ////////// IsNeedPinForContainer()
+						module_class.Call( crypto_plugin, "GetContainerNames", {} ).
+							addCallback( function( containers ) {
+								for( let it = 0; it < containers.length; ++it )
+									module_class.Call( crypto_plugin, "IsNeedPinForContainer", { ContainerName: containers[ it ] } ).
+										addCallback( function( container_is_need_pin ) {
+										} )
+							} )
+					}
+					*/
+					
+					/*
+					{ ////////// Test()
+						module_class.Call( crypto_plugin, "Test", {} ).addCallback( function() {
+						} )
+					}
+					*/
+					
+					/*
 					{ ////////// DecryptDataUrl
-						/*
 						module_class.Call( crypto_plugin, "GetParsedCertificates", {} ).addCallback( function( certificates ) {
 							module_class.Call( crypto_plugin, "EncryptDataUrl", { 
 								SourceDataUrl: "https://test-disk.sbis.ru/disk/api/v1/244ab66e-6da6-4400-9c86-1b40f4624184_74be5020-5329-4543-8e89-1bfa5cc305a1",
@@ -92,11 +169,11 @@ define( [
 								debugger;
 							} )
 						} )
-						*/
 					}
+					*/
 					
+					/*
 					{ ////////// Нагрузочное тестирование
-						/*
 						module_class.Call( crypto_plugin, "Test", {} ).
 							addCallback( function( result ) {
 								var data = new entity.Record( {
@@ -114,11 +191,12 @@ define( [
 									addCallback( function() {
 									} )
 							} )
-						*/
 					}
+					*/
 					
+					/*
 					{ ////////// Получение контейнеров из кэша
-						/*// Чистим кэш
+						// Чистим кэш
 						module_class.Call( crypto_plugin, "ClearCache", {} ).
 							addCallback( function() {
 								// Получение списка контейнеров из пустого кэша
@@ -134,11 +212,11 @@ define( [
 											} )
 									} )
 							} )
-						*/
 					}
+					*/
 					
+					/*
 					{ ////////// Получаем по отпечаткам атрибуты контейнеров из кэша
-						/*
 						// Чистим кэш
 						module_class.Call( crypto_plugin, "ClearCache", {} ).
 							addCallback( function() {
@@ -154,32 +232,36 @@ define( [
 											} )
 									} )
 							} )
-						*/
 					}
+					*/
 					
+					/*
 					{ ////////// Получение списка контейнеров от провайдеров
-						/*module_class.Call( crypto_plugin, "GetContainerNames", {} ).
+						module_class.Call( crypto_plugin, "GetContainerNames", {} ).
 							addCallback( function( containers ) { 
 							} )
-						*/
 					}
+					*/
 					
+					/*
 					{ ////////// Получение RSA сертификата из контейнера
-						/*module_class.Call( crypto_plugin, "GetCertificateFromContainer", { ContainerName: "RSA_Com_EToken::d65ee731:041c2205" } ).
+						module_class.Call( crypto_plugin, "GetCertificateFromContainer", { ContainerName: "RSA_Com_EToken::d65ee731:041c2205" } ).
 							addCallback( function() {
 							} )
-						*/
 					}
+					*/
 
+					/*
 					{ ////////// Получение ГОСТ сертификата из контейнера
-						/*module_class.Call( crypto_plugin, "GetCertificateFromContainer", { ContainerName: "GOST_2012_256_Com_RtECP20::3a3852a4:20082402" } ).
+						module_class.Call( crypto_plugin, "GetCertificateFromContainer", { ContainerName: "GOST_2012_256_Com_RtECP20::3a3852a4:20082402" } ).
 							addCallback( function() {
 							} )
-						*/
 					}
+					*/
 					
+					/*
 					{ ////////// Получение списка сертификатов, извлечение секретного ключа
-						/*module_class.Call( crypto_plugin, "GetParsedCertificates", {} ).
+						module_class.Call( crypto_plugin, "GetParsedCertificates", {} ).
 							addCallback( function( certificates ) {
 								if( certificates.length != 0 )
 								{
@@ -193,12 +275,13 @@ define( [
 										addErrback( function() { console.log( "error" ) } )
 								}
 							} )
-						*/
 					}
+					*/
 					
+					/*
 					{ ////////// Получение 1 сертификата кэша
 						// Чистим кэш
-						/*module_class.Call( crypto_plugin, "ClearCache" ).
+						module_class.Call( crypto_plugin, "ClearCache" ).
 							addCallback( function() {
 								// Получение списка контейнеров
 								module_class.Call( crypto_plugin, "GetContainerNames", {} ).
@@ -220,17 +303,20 @@ define( [
 											} )
 									} )
 							} )
-						*/
 					}
+					*/
 					
+					/*
 					{ ////////// Получение списка сертификатов из кэша
 						module_class.Call( crypto_plugin, "GetParsedCertificatesFromCache", {} ).
 							addCallback( function( certificates ) {
 							} )
 					}
+					*/
 					
+					/*
 					{ ////////// CryptoPluginRemote.SendContainerInfo
-						/*var tokens = new collection.RecordSet( { adapter: 'adapter.sbis' } );
+						var tokens = new collection.RecordSet( { adapter: 'adapter.sbis' } );
 						tokens.add( entity.Record.fromObject( {	Serial: "4C7D9081",	Name: "Новый том", Type: "REMOVABLE_DRIVE",	StorageCapacity: null, StorageFreeSpace: null }, 'adapter.sbis' ) )
 						var container = new entity.Record( {
 							adapter: 'adapter.sbis',
@@ -259,9 +345,9 @@ define( [
 						module_class.Call( crypto_plugin_remote, "SendContainerInfo", { Data: entity.Record.fromObject( send_container_info_param, 'adapter.sbis' ) } ).
 							addCallback( function() {
 							} )
-						*/
 					}
-				} )
+					*/
+//				} )
 		}
 	};
 
