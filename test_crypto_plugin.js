@@ -38,7 +38,8 @@ define( [
 			return deferred;
 		},
 
-		Iteration: function( item ) {
+		// Leak memory test
+		Leak: function( item ) {
 			console.log( item );
 			let crypto_plugin_params = {
 				name: "SbisCryptoPlugin",
@@ -56,10 +57,20 @@ define( [
 					queryTimeout: 60000
 				}
 			});
-			crypto_plugin.destroy();
-			delete crypto_plugin_params;
-			if( item > 0 )
-				this.Iteration( --item );
+			module_class.Call( crypto_plugin, "Configure", { Parameters: { providerClasses: [ "GOST", "GOST_2012" ] } } ).
+				addCallback( function() {
+					module_class.Call( crypto_plugin, "IsAnyProviderInstalled", {} ).
+						addCallback( function( is_any_provider_installed ) {
+							module_class.Call( crypto_plugin, "GetContainerNames", {} ).
+								addCallback( function( container_names ) {
+									module_class.Call( crypto_plugin, "destroy", {} ).
+										addCallback( function() {
+											if( item > 0 )
+												module_class.Leak( --item );
+										} )
+								} )
+						} )
+				} )
 		},
 
 		All: function() {
@@ -81,16 +92,6 @@ define( [
 				}
 			});
 				
-			module_class.Call( crypto_plugin, "Item", { Parameters: { providerClasses: [ "GOST", "GOST_2012" ] } } ).
-				addCallback( function() 
-				{
-//						module_class.Call( crypto_plugin, "ClientDisconnected", { Data: [ { id: "123", name: "SBISPLUGIN_SECUREWEBSOCKET" } ] } ).
-//							addCallback( function() {
-								crypto_plugin.destroy();
-//							} )
-				})
-
-			
 			/*
 			var crypto_plugin = new SbisPluginClientFull.LocalService( {
 				endpoint: {
