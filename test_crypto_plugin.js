@@ -28,7 +28,8 @@ define( [
 			var deferred = new Deferred();
 			crypto_plugin.call( method, params ).
 				addCallback( function( result ) { 
-					console.log( method + "() - ok" ); 
+					// Jeglov
+					//console.log( method + "() - ok" ); 
 					deferred.callback( result );
 				} ).
 				addErrback( function( error ) { 
@@ -39,8 +40,8 @@ define( [
 		},
 
 		// Leak memory test
-		Leak: function( item ) {
-			console.log( item );
+		TestLeakMemory: function( item, maximum_usage_memory = 0 ) {
+			console.log( "item = " + item + ",\tmaximum_usage_memory = " + maximum_usage_memory.toLocaleString() );
 			let crypto_plugin_params = {
 				name: "SbisCryptoPlugin",
 				version: "0.0.0.0"
@@ -57,18 +58,31 @@ define( [
 					queryTimeout: 60000
 				}
 			});
-			module_class.Call( crypto_plugin, "Configure", { Parameters: { providerClasses: [ "GOST", "GOST_2012" ] } } ).
+			/*
+			module_class.Call( crypto_plugin, "LastErrorText", {} ).
 				addCallback( function() {
-					module_class.Call( crypto_plugin, "IsAnyProviderInstalled", {} ).
-						addCallback( function( is_any_provider_installed ) {
-							module_class.Call( crypto_plugin, "GetContainerNames", {} ).
-								addCallback( function( container_names ) {
-									module_class.Call( crypto_plugin, "destroy", {} ).
-										addCallback( function() {
-											if( item > 0 )
-												module_class.Leak( --item );
+					module_class.Call( crypto_plugin, "Configure", { Parameters: { providerClasses: [ "GOST", "GOST_2012" ] } } ).
+						addCallback( function() {
+							module_class.Call( crypto_plugin, "IsAnyProviderInstalled", {} ).
+								addCallback( function( is_any_provider_installed ) {
+									module_class.Call( crypto_plugin, "GetContainerNames", {} ).
+										addCallback( function( container_names ) {
+											module_class.Call( crypto_plugin, "destroy", {} ).
+												addCallback( function() {
+													if( --item > 0 )
+														module_class.Leak( item );
+												} )
 										} )
 								} )
+						} )
+				} )
+			*/
+			module_class.Call( crypto_plugin, "TestLeakMemory", { MaximumUsageMemory: maximum_usage_memory } ).
+				addCallback( function( maximum_usage_memory ) {
+					module_class.Call( crypto_plugin, "destroy", {} ).
+						addCallback( function() {
+							if( --item > 0 )
+								module_class.TestLeakMemory( item, maximum_usage_memory );
 						} )
 				} )
 		},
