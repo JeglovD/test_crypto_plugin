@@ -28,8 +28,7 @@ define( [
 			var deferred = new Deferred();
 			crypto_plugin.call( method, params ).
 				addCallback( function( result ) { 
-					// Jeglov
-					//console.log( method + "() - ok" ); 
+					console.log( method + "() - ok" ); 
 					deferred.callback( result );
 				} ).
 				addErrback( function( error ) { 
@@ -88,11 +87,11 @@ define( [
 		},
 
 		All: function() {
+			// CryptoPlugin
 			let crypto_plugin_params = {
 				name: "SbisCryptoPlugin",
 				version: "0.0.0.0"
 			};
-			
 			let crypto_plugin = new SbisPluginClientFull.LocalService( {
 				endpoint: {
 					address: crypto_plugin_params.name + '-' + crypto_plugin_params.version,
@@ -105,22 +104,8 @@ define( [
 					queryTimeout: 60000
 				}
 			});
-				
 			/*
-			var crypto_plugin = new SbisPluginClientFull.LocalService( {
-				endpoint: {
-					address: crypto_plugin_params.name + '-' + crypto_plugin_params.version,
-					contract: crypto_plugin_params.name
-				},
-				options: {
-					mode: "runOnce",
-					opener: {},
-					// Таймаут ответа - 1 мин
-					queryTimeout: 60000
-				}
-			});
-			*/
-			/*
+			// CryptoPluginRemote
 			let crypto_plugin_remote_params = {
 				name: "CryptoPluginRemote",
 				version: "0.0.0.0"
@@ -140,21 +125,33 @@ define( [
 			*/
 
 			// Конфигурация плагина
-//			module_class.Call( crypto_plugin, "Configure", { Parameters: { providerClasses: [ 
-//					"GOST", 
-//					"GOST_2012", 
-//					//"RSA" 
-//				] } } ).
-//				addCallback( function() { 
+			module_class.Call( crypto_plugin, "Configure", { Parameters: { providerClasses: [ 
+					"GOST", 
+					"GOST_2012", 
+					//"RSA" 
+				] } } ).
+				addCallback( function() { 
 				
-					/*
-					{ // Memory leak
-						module_class.Call( crypto_plugin, "ClientDisconnected", { Data: [ { id: "123", name: "SBISPLUGIN_SECUREWEBSOCKET" } ] } ).
-							addCallback( function() {
+					{ // Экспорт-импорт контейнеров
+						module_class.Call( crypto_plugin, "GetContainerNames", {} ).
+							addCallback( function( containers ) {
+								if( containers.length )
+								{
+									module_class.Call( crypto_plugin, "ExportContainerKey", { ContainerName: containers[ 0 ] } ).
+										addCallback( function( container_data ) {
+											module_class.Call( crypto_plugin, "GetCertificateFromContainer", { ContainerName: containers[ 0 ], CryptoUsage: 0 } ).
+												addCallback( function( certificate_id ) {
+													module_class.Call( crypto_plugin, "ImportContainer", { ContainerName: "GOST_Win_API::\Кров_Иван_Федорович, 000000000000000_туц, Директор (3 категории) (копия)", KeyData: container_data, Certificate: certificate_id, Reader: "\\\\.\FAT12_D\\" } ).
+														addCallback( function() {
+															
+														} )
+												} )
+										} )
+								}
 							} )
+						
 					}
-					*/
-					
+				
 					/*
 					{ ////////// IsNeedPinForContainer()
 						module_class.Call( crypto_plugin, "GetContainerNames", {} ).
@@ -362,7 +359,7 @@ define( [
 							} )
 					}
 					*/
-//				} )
+				} )
 		}
 	};
 
